@@ -204,28 +204,29 @@ export function DesktopView({
               {/* Time Mode Quick Select */}
               <div className="hidden sm:flex items-center gap-1 p-1 bg-[#F4F4F2] rounded-xl border border-[#E5E5E3] text-[11px] shrink-0">
                 <button
+                  onClick={() => setTimeMode('live')}
+                  className={`px-2.5 py-1 rounded-lg font-semibold transition-colors flex items-center gap-1.5 ${
+                    timeMode === 'live' ? 'bg-[#1A1A1A] text-white shadow-xs' : 'text-[#6B6B6B] hover:text-[#1A1A1A]'
+                  }`}
+                >
+                  <span className={`w-1.5 h-1.5 rounded-full ${timeMode === 'live' ? 'bg-[#22C55E] animate-pulse' : 'bg-[#999999]'}`} />
+                  <span>Live Clock</span>
+                </button>
+                <button
                   onClick={() => setTimeMode('mockup')}
                   className={`px-2.5 py-1 rounded-lg font-semibold transition-colors ${
-                    timeMode === 'mockup' ? 'bg-white text-[#1A1A1A] shadow-xs' : 'text-[#6B6B6B] hover:text-[#1A1A1A]'
+                    timeMode === 'mockup' ? 'bg-[#1A1A1A] text-white shadow-xs' : 'text-[#6B6B6B] hover:text-[#1A1A1A]'
                   }`}
                 >
                   Mockup (21:10)
                 </button>
                 <button
-                  onClick={() => setTimeMode('live')}
-                  className={`px-2.5 py-1 rounded-lg font-semibold transition-colors ${
-                    timeMode === 'live' ? 'bg-white text-[#1A1A1A] shadow-xs' : 'text-[#6B6B6B] hover:text-[#1A1A1A]'
-                  }`}
-                >
-                  Live
-                </button>
-                <button
                   onClick={() => setTimeMode('custom')}
                   className={`px-2.5 py-1 rounded-lg font-semibold transition-colors ${
-                    timeMode === 'custom' ? 'bg-white text-[#1A1A1A] shadow-xs' : 'text-[#6B6B6B] hover:text-[#1A1A1A]'
+                    timeMode === 'custom' ? 'bg-[#1A1A1A] text-white shadow-xs' : 'text-[#6B6B6B] hover:text-[#1A1A1A]'
                   }`}
                 >
-                  Scrub
+                  Scrub Slider
                 </button>
               </div>
             </div>

@@ -100,9 +100,15 @@ export function MobileView({
         {/* iPhone Speaker Ear Speaker & Dynamic Island Visual Notch */}
         <div className="w-28 h-4 bg-[#1E1E1E] rounded-full mx-auto -mt-2.5 mb-1 hidden md:block" />
 
-        {/* Header: Title + Add Button */}
+        {/* Header: Title + Live Badge + Add Button */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '44px' }}>
-          <span style={{ fontSize: '12px', fontWeight: 700, letterSpacing: '0.16em' }}>GOOD CALL</span>
+          <div className="flex items-center gap-2">
+            <span style={{ fontSize: '12px', fontWeight: 700, letterSpacing: '0.16em' }}>GOOD CALL</span>
+            <span className="px-2 py-0.5 rounded-full bg-[#ECFDF5] text-[#059669] text-[10px] font-bold flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-pulse" />
+              LIVE
+            </span>
+          </div>
           <button
             type="button"
             onClick={() => setShowAddModal(true)}

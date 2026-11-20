@@ -17,6 +17,22 @@ import {
   TimeApiResponse,
 } from '../lib/timeapi';
 
+function getLiveNYTime() {
+  try {
+    const now = new Date();
+    const nyStr = now.toLocaleTimeString('en-US', {
+      timeZone: 'America/New_York',
+      hour12: false,
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+    const [h, m] = nyStr.split(':').map(Number);
+    return { hour: isNaN(h) ? 12 : h, minute: isNaN(m) ? 0 : m };
+  } catch {
+    return { hour: 12, minute: 0 };
+  }
+}
+
 export default function GoodCallApp() {
   // View toggle: mobile vs desktop
   const [viewMode, setViewMode] = useState<'mobile' | 'desktop'>('desktop');
@@ -25,10 +41,10 @@ export default function GoodCallApp() {
   const [contacts, setContacts] = useState<Contact[]>(DEFAULT_CONTACTS);
   const [activeContactId, setActiveContactId] = useState<string>('mom');
 
-  // Time modes: 'mockup' (default 21:10), 'live', 'custom' (scrubber)
-  const [timeMode, setTimeMode] = useState<'mockup' | 'live' | 'custom'>('mockup');
-  const [customHour, setCustomHour] = useState<number>(21);
-  const [customMinute, setCustomMinute] = useState<number>(10);
+  // Time modes: 'live' (default: real New York time), 'mockup' (spec 21:10), 'custom' (scrubber)
+  const [timeMode, setTimeMode] = useState<'live' | 'mockup' | 'custom'>('live');
+  const [customHour, setCustomHour] = useState<number>(() => getLiveNYTime().hour);
+  const [customMinute, setCustomMinute] = useState<number>(() => getLiveNYTime().minute);
 
   // TimeAPI.world data cache
   const [myApiData, setMyApiData] = useState<TimeApiResponse | null>(null);
@@ -116,10 +132,24 @@ export default function GoodCallApp() {
   const theirHour = Math.floor(theirTotalMinutes / 60);
   const theirMinute = theirTotalMinutes % 60;
 
-  // Day calculations
-  const dayOffset = Math.floor((myHour * 60 + myMinute + offset * 60) / (24 * 60));
-  const myDay = 'Fri';
-  const theirDay = dayOffset > 0 ? 'Sat' : dayOffset < 0 ? 'Thu' : 'Fri';
+  // Dynamic Day calculations
+  const [myDay, theirDay] = useMemo(() => {
+    try {
+      const now = new Date();
+      const myFormatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: MY_LOCATION.timeZone,
+        weekday: 'short',
+      });
+      const theirFormatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: activeContact.timeZone,
+        weekday: 'short',
+      });
+      return [myFormatter.format(now), theirFormatter.format(now)];
+    } catch {
+      const dayOffset = Math.floor((myHour * 60 + myMinute + offset * 60) / (24 * 60));
+      return ['Fri', dayOffset > 0 ? 'Sat' : dayOffset < 0 ? 'Thu' : 'Fri'];
+    }
+  }, [activeContact.timeZone, myHour, myMinute, offset]);
 
   // Overlap ranges
   const overlapRanges = useMemo<OverlapRange[]>(() => {
